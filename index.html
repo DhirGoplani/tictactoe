@@ -4,128 +4,62 @@
   <meta charset="utf-8" />
   <title>Tic Tac Toe — Menu</title>
   <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link rel="stylesheet" href="style.css">
   <style>
-    :root{
-      --bg: #ffffff;
-      --text: #111111;
-      --accent: #2980b9;
-      --box-bg: #ffffff;
-      --box-border: #111;
-      --char-color: #111;
-    }
-    body.dark{
-      --bg: #121212;
-      --text: #39ff14;
-      --accent: #6f42c1;
-      --box-bg: #1e1e1e;
-      --box-border: #9b59b6;
-      --char-color: #39ff14;
-    }
-    *{box-sizing:border-box;margin:0;padding:0}
-    body{
-      min-height:100vh;
-      display:flex;
-      flex-direction:column;
-      align-items:center;
-      justify-content:center;
-      gap:20px;
-      background:var(--bg);
-      color:var(--text);
-      font-family:Segoe UI, Roboto, Arial, sans-serif;
-      transition:background .25s, color .25s;
-      padding:24px;
-    }
-    header{
-        width:100%;
-        display:flex;
-        justify-content:center;
-        align-items:center;
-        margin-bottom:10px;
-    }
-    #toggleTheme{
-      padding:8px 12px;
-      border-radius:8px;
-      border:none;
-      cursor:pointer;
-      background:var(--accent);
-      color:white;
-      font-weight:600;
-    }
-    main{
-      width:100%;
-      max-width:520px;
-      display:flex;
-      flex-direction:column;
-      align-items:center;
-      gap:18px;
-    }
-    #board{
-      display:grid;
-      grid-template-columns:repeat(3, 90px);
-      grid-auto-rows:90px;
-      gap:10px;
-      pointer-events:none;
-    }
-    .box{
-      width:90px;
-      height:90px;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      border-radius:10px;
-      border:3px solid var(--box-border);
-      background:var(--box-bg);
-      font-size:36px;
-      font-weight:700;
-      color:var(--char-color);
-    }
+  #board {
+    grid-template-columns: repeat(3, 140px) !important;
+    grid-auto-rows: 140px !important;
+    gap: 14px !important;
+  }
+  .box {
+    font-size: 48px;
+    border-width: 4px;
+  }
+   .menu-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 22px;
+    margin-top: 20px;
+  }
+  .menu-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    width: 100%;
+  }
 
-    footer{
-      width:100%;
-      display:flex;
-      justify-content:center;
-      gap:16px;
-      margin-top:6px;
-    }
-    .mode-btn{
-      padding:12px 18px;
-      border-radius:10px;
-      border:none;
-      cursor:pointer;
-      background:var(--accent);
-      color:white;
-      font-size:16px;
-      font-weight:700;
-      min-width:150px;
-    }
-    .note{font-size:14px; color:rgba(0,0,0,0.5)}
-    body.dark .note{color:rgba(255,255,255,0.35)}
-  </style>
+  .menu-buttons button {
+    padding: 12px 20px;
+    min-width: 150px;
+    font-size: 16px;
+    border-radius: 12px;
+  }
+</style>
 </head>
 <body>
-  <header>
+  <main class="menu-container">
+  <h1>Tic Tac Toe</h1>
+
+  <div id="board" aria-hidden="true">
+    <div class="box"></div>
+    <div class="box"></div>
+    <div class="box"></div>
+    <div class="box"></div>
+    <div class="box"></div>
+    <div class="box"></div>
+    <div class="box"></div>
+    <div class="box"></div>
+    <div class="box"></div>
+  </div>
+
+  <footer class="menu-buttons">
     <button id="toggleTheme">Toggle Dark/Light</button>
-  </header>
-  <main>
-    <h1>Tic Tac Toe</h1>
-    <div id="board" aria-hidden="true">
-      <div class="box"></div>
-      <div class="box"></div>
-      <div class="box"></div>
-      <div class="box"></div>
-      <div class="box"></div>
-      <div class="box"></div>
-      <div class="box"></div>
-      <div class="box"></div>
-      <div class="box"></div>
-    </div>
-    <p class="note">Choose a mode </p>
-    <footer>
-      <button class="mode-btn" id="pvp">PvP</button>
-      <button class="mode-btn" id="pvce">PvC (Easy)</button>
-      <button class="mode-btn" id="pvch">PvC (Hard)</button>
-    </footer>
-  </main>
+    <button class="mode-btn" id="pvp">PvP</button>
+    <button class="mode-btn" id="pvce">PvC (Easy)</button>
+    <button class="mode-btn" id="pvch">PvC (Hard)</button>
+  </footer>
+</main>
   <script>
     const toggleThemeBtn = document.getElementById('toggleTheme');
     function applyThemeFromStorage(){
