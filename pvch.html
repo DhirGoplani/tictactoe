@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Tic Tac Toe — PvC (Hard)</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <style>
+    :root{
+        --bg:#fff;
+        --text:#111;
+        --box-bg:#fff;
+        --box-border:#111;
+        --char-color:#111;
+        --accent:#2980b9
+    }
+    body.dark{
+        --bg:#121212;
+        --text:#39ff14;
+        --box-bg:#1e1e1e;
+        --box-border:#9b59b6;
+        --char-color:#39ff14
+    }
+    *{
+        box-sizing:border-box;
+        margin:0;
+        padding:0
+    }
+    body{
+        min-height:100vh;
+        display:flex;
+        flex-direction:column;
+        align-items:center;
+        justify-content:center;
+        gap:12px;
+        background:var(--bg);
+        color:var(--text);
+        font-family:Segoe UI, Arial;padding:20px
+    }
+    header{
+        width:100%;
+        display:flex;
+        justify-content:center;
+        align-items:center;
+        margin-bottom:10px;
+    }
+    #toggleTheme{
+        padding:8px 12px;
+        border-radius:8px;
+        border:none;cursor:pointer;
+        background:var(--accent);color:#fff
+    }
+    h1{font-size:40px}
+    #board{
+        display:grid;
+        grid-template-columns:repeat(3,110px);
+        grid-auto-rows:110px;
+        gap:10px
+    }
+    .box{display:flex;
+        align-items:center;
+        justify-content:center;
+        font-size:44px;font-weight:800;
+        border-radius:10px;
+        border:3px solid var(--box-border);
+        background:var(--box-bg);
+        cursor:pointer;
+    }
+    .winning{background:#28a745 !important}
+    #status{
+        height:28px;
+        margin-top:6px;
+        font-size:20px
+    }
+    #score{
+        font-size:18px;
+        margin-top:6px
+    }
+    #buttons{
+        margin-top:10px;
+        display:flex;
+        gap:8px
+    }
+    button{
+        padding:8px 12px;
+        border-radius:8px;
+        border:none;
+        background:var(--accent);
+        color:white;
+        cursor:pointer
+    }
+    .muted{
+        opacity:0.8;
+        font-size:14px
+    }
+  </style>
+</head>
+<body>
+  <header><button id="toggleTheme">Toggle Dark/Light</button></header>
+  <h1>Tic Tac Toe</h1>
+  <div id="playerInfo" class="muted">
+    <span>You: <strong id="playerChar">X</strong></span>
+    <span style="margin-left:16px">Computer: <strong id="aiChar">O</strong></span>
+  </div>
+  <div id="board" aria-live="polite"></div>
+  <div id="status"></div>
+  <div id="score">You: 0 | Computer: 0</div>
+  <div id="buttons">
+    <button id="reset">Reset</button>
+    <button id="back">Back to Menu</button>
+  </div>
+<script>
+  const themeBtn = document.getElementById('toggleTheme');
+  function applyTheme(){ if(localStorage.getItem('ttt-theme')==='dark') document.body.classList.add('dark'); themeBtn.textContent = document.body.classList.contains('dark') ? 'Switch to Light' : 'Switch to Dark'; }
+  applyTheme();
+  themeBtn.addEventListener('click', ()=> { document.body.classList.toggle('dark'); localStorage.setItem('ttt-theme', document.body.classList.contains('dark') ? 'dark' : 'light'); themeBtn.textContent = document.body.classList.contains('dark') ? 'Switch to Light' : 'Switch to Dark'; });
+  const boardEl = document.getElementById('board');
+  const status = document.getElementById('status');
+  const resetBtn = document.getElementById('reset');
+  const backBtn = document.getElementById('back');
+  const scoreBoard = document.getElementById('score');
+  const playerCharEl = document.getElementById('playerChar');
+  const aiCharEl = document.getElementById('aiChar');
+  let gameCount = 0;           
+  let playerChar = 'X';
+  let aiChar = 'O';
+  let currentTurn = 'X';
+  let cells = Array(9).fill('');
+  let gameOver = false;
+  let playerScore = 0;
+  let aiScore = 0;
+  let centerPlacementTimeout = null;
+  function updateCharsFromGameCount(){
+    if ((gameCount & 1) === 0) {
+      playerChar = 'X';
+      aiChar = 'O';
+    } else {
+      playerChar = 'O';
+      aiChar = 'X';
+    }
+    playerCharEl.textContent = playerChar;
+    aiCharEl.textContent = aiChar;
+  }
+  function createBoard(){
+    boardEl.innerHTML = '';
+    for(let i=0;i<9;i++){
+      const d = document.createElement('div');
+      d.className = 'box';
+      d.dataset.index = i;
+      d.textContent = cells[i];
+      d.addEventListener('click', onClick);
+      boardEl.appendChild(d);
+    }
+  }
+  function onClick(e){
+    const idx = Number(e.target.dataset.index);
+    if (gameOver || cells[idx] !== '' || currentTurn !== playerChar) return;
+    makeMove(idx, playerChar);
+    if (!gameOver && currentTurn === aiChar) {
+      setTimeout(()=> { aiMoveController(); }, 120);
+    }
+  }
+  function makeMove(idx, ch){
+    if (typeof idx !== 'number' || idx < 0 || idx > 8) return;
+    cells[idx] = ch;
+    const el = document.querySelector(`.box[data-index="${idx}"]`);
+    if (el) el.textContent = ch;
+    checkWinner();
+    if (!gameOver) {
+      currentTurn = (currentTurn === 'X') ? 'O' : 'X';
+    } else {
+      updateResetButton();
+    }
+  }
+  function aiMoveController(){
+    if (gameOver) return;
+    const pick = bestMove();
+    if (pick !== null) makeMove(pick, aiChar);
+  }
+  function availableMoves(){
+    const arr = [];
+    for(let i=0;i<9;i++) if(cells[i] === '') arr.push(i);
+    return arr;
+  }
+  function checkWinner(){
+    const wins = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+    for(const [a,b,c] of wins){
+      if (cells[a] && cells[a] === cells[b] && cells[b] === cells[c]) {
+        gameOver = true;
+        const winner = cells[a];
+        status.textContent = (winner === playerChar ? 'You win!' : 'Computer wins!');
+        if (winner === playerChar) playerScore++; else aiScore++;
+        updateScore();
+        document.querySelectorAll('.box')[a].classList.add('winning');
+        document.querySelectorAll('.box')[b].classList.add('winning');
+        document.querySelectorAll('.box')[c].classList.add('winning');
+        return;
+      }
+    }
+    if (!cells.includes('')) {
+      gameOver = true;
+      status.textContent = "It's a draw!";
+    }
+  }
+  function updateScore(){
+    scoreBoard.textContent = `You: ${playerScore} | Computer: ${aiScore}`;
+  }
+  function bestMove(){
+    const empties = availableMoves();
+    if (empties.length === 0) return null;
+    if (empties.length === 9) return 4; 
+    let bestScore = -Infinity;
+    let move = empties[0];
+    for (const idx of empties) {
+      cells[idx] = aiChar;
+      const score = minimax(cells, 0, false);
+      cells[idx] = '';
+      if (score > bestScore) {
+        bestScore = score;
+        move = idx;
+      }
+    }
+    return move;
+  }
+  function minimax(boardState, depth, isMaximizing){
+    const winner = evaluate(boardState);
+    if (winner !== null) {
+      if (winner === aiChar) return 10 - depth;
+      if (winner === playerChar) return depth - 10;
+      if (winner === 'draw') return 0;
+    }
+    if(isMaximizing){
+      let best = -Infinity;
+      for (const i of boardState.map((v,i)=> v === '' ? i : null).filter(v=> v!==null)) {
+        boardState[i] = aiChar;
+        const score = minimax(boardState, depth+1, false);
+        boardState[i] = '';
+        best = Math.max(best, score);
+      }
+      return best;
+    }
+    else {
+      let best = Infinity;
+      for (const i of boardState.map((v,i)=> v === '' ? i : null).filter(v=> v!==null)) {
+        boardState[i] = playerChar;
+        const score = minimax(boardState, depth+1, true);
+        boardState[i] = '';
+        best = Math.min(best, score);
+      }
+      return best;
+    }
+  }
+  function evaluate(b){
+    const wins = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+    for (const [a,b1,c] of wins) {
+      if (b[a] && b[a] === b[b1] && b[b1] === b[c]) return b[a];
+    }
+    if (!b.includes('')) return 'draw';
+    return null;
+  }
+  function updateResetButton(){
+    if (gameOver) {
+      resetBtn.textContent = 'New Game';
+    } else {
+      resetBtn.textContent = 'Reset';
+    }
+  }
+  function startNewGame(){
+    updateCharsFromGameCount();
+    cells = Array(9).fill('');
+    gameOver = false;
+    status.textContent = '';
+    createBoard();
+    document.querySelectorAll('.box').forEach(b=> b.classList.remove('winning'));
+    updateResetButton();
+    if (playerChar === 'X') {
+      currentTurn = 'X';
+      boardEl.style.pointerEvents = 'auto';
+    }
+    else{
+      currentTurn = 'O';
+      boardEl.style.pointerEvents = 'none';
+      if (centerPlacementTimeout) clearTimeout(centerPlacementTimeout);
+      centerPlacementTimeout = setTimeout(() => {
+        if (!gameOver && cells[4] === '') {
+          cells[4] = aiChar;
+          const center = document.querySelector('.box[data-index="4"]');
+          if (center) center.textContent = aiChar;
+          checkWinner();
+        }
+        boardEl.style.pointerEvents = 'auto';
+        updateResetButton();
+      }, 200);
+    }
+  }
+  resetBtn.addEventListener('click', ()=>{
+    gameCount++;
+    startNewGame();
+  });
+  backBtn.addEventListener('click', ()=> location.href = 'index.html');
+  startNewGame();
+  document.addEventListener('keydown', (e)=>{
+    if (e.key === 'r' || e.key === 'R') {
+      gameCount++;
+      startNewGame();
+    }
+  });
+</script>
+</body>
+</html>

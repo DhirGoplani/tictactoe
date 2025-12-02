@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Tic Tac Toe — PvP</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    :root{
+      --bg: white;
+      --text: black;
+      --box-bg: white;
+      --box-border: black;
+      --char-color: black;
+    }
+    body.dark{
+      --bg:#121212;
+      --text:#39ff14;
+      --box-bg:#1e1e1e;
+      --box-border:#9b59b6;
+      --char-color:#39ff14;
+    }
+    *{
+        box-sizing:border-box
+        ;margin:0;
+        padding:0
+    }
+    body{
+      min-height:100vh;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      gap:12px;
+      font-family:Segoe UI, Arial, sans-serif;
+      background:var(--bg);
+      color:var(--text);
+      padding:18px;
+    }
+    header{
+        width:100%;
+        display:flex;
+        justify-content:center;
+        align-items:center;
+        margin-bottom:10px;
+    }
+    #toggleTheme{
+        padding:8px 12px;
+        border-radius:8px;
+        border:none;
+        cursor:pointer;
+        background:#2980b9;
+        color:white;
+    }
+    h1{font-size:44px}
+    #playerInfo{
+        display:flex;gap:24px;
+        font-size:18px;
+    }
+    .player-box{
+        display:flex;
+        align-items:center;
+        gap:8px;
+    }
+    .char-box{
+        width:40px;
+        height:40px;
+        border-radius:6px;
+        border:2px solid var(--box-border);
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        font-weight:800;font-size:26px;
+        color:var(--char-color);
+        background:var(--box-bg)
+    }
+    #board{
+        display:grid;
+        grid-template-columns:repeat(3,120px);
+        grid-auto-rows:120px;
+        gap:12px;
+        margin-top:12px;
+    }
+    .box{
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        font-size:52px;
+        font-weight:800;
+        border-radius:12px;
+        border:3px solid var(--box-border);
+        background:var(--box-bg);
+        cursor:pointer;
+        transition:transform .12s;
+    }
+    .box:active{transform:scale(.98)}
+    .winning{
+        background:#28a745 !important;
+    }
+    body.dark .winning{
+        background:#444 !important;
+    }
+    #status{
+        height:28px;
+        margin-top:6px;
+        font-size:20px;
+    }
+    #score{
+        font-size:18px;
+        margin-top:6px;
+    }
+    #buttons{
+        margin-top:10px;
+        display:flex;
+        gap:12px;
+    }
+    button{
+        padding:10px 16px;
+        border-radius:10px;
+        border:none;
+        background:#2980b9;
+        color:white;
+        font-size:16px;
+        cursor:pointer;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <button id="toggleTheme">Toggle Dark/Light</button>
+  </header>
+
+  <h1>Tic Tac Toe</h1>
+
+  <div id="playerInfo">
+    <div class="player-box">
+      <div id="char1" class="char-box">X</div>
+      <span>Player 1</span>
+    </div>
+    <div class="player-box">
+      <div id="char2" class="char-box">O</div>
+      <span>Player 2</span>
+    </div>
+  </div>
+
+  <div id="board"></div>
+  <div id="status"></div>
+  <div id="score">Player 1: 0 | Player 2: 0</div>
+
+  <div id="buttons">
+    <button id="reset">Reset</button>
+    <button id="back">Back to Menu</button>
+  </div>
+
+<script>
+  const toggleThemeBtn = document.getElementById('toggleTheme');
+  function applyThemeFromStorage(){ if(localStorage.getItem('ttt-theme')==='dark') document.body.classList.add('dark'); toggleThemeBtn.textContent = document.body.classList.contains('dark') ? 'Switch to Light' : 'Switch to Dark'; }
+  applyThemeFromStorage();
+  toggleThemeBtn.addEventListener('click', ()=>{
+    document.body.classList.toggle('dark');
+    const isDark = document.body.classList.contains('dark');
+    localStorage.setItem('ttt-theme', isDark ? 'dark' : 'light');
+    toggleThemeBtn.textContent = isDark ? 'Switch to Light' : 'Switch to Dark';
+  });
+  const board = document.getElementById("board");
+  const status = document.getElementById("status");
+  const resetBtn = document.getElementById("reset");
+  const backBtn = document.getElementById("back");
+  const char1 = document.getElementById("char1");
+  const char2 = document.getElementById("char2");
+  const scoreBoard = document.getElementById("score");
+  let resetCount = 0;
+  let currentTurn;
+  let gameOver = false;
+  let cells = Array(9).fill("");
+  let player1Score = 0;
+  let player2Score = 0;
+  function getChars(){
+    return resetCount % 2 === 0 ? ["X", "O"] : ["O", "X"];
+  }
+  function updateCharDisplay(){
+    const [p1, p2] = getChars();
+    char1.textContent = p1;
+    char2.textContent = p2;
+  }
+  function createBoard(){
+    board.innerHTML = "";
+    for (let i = 0; i < 9; i++){
+      const cell = document.createElement("div");
+      cell.classList.add("box");
+      cell.dataset.index = i;
+      cell.textContent = cells[i];
+      cell.addEventListener("click", handleClick);
+      board.appendChild(cell);
+    }
+  }
+  function handleClick(e){
+    const idx = Number(e.target.dataset.index);
+    if(cells[idx] !== "" || gameOver) return;
+    cells[idx] = currentTurn;
+    e.target.textContent = currentTurn;
+    checkWinner();
+    if(!gameOver){
+      currentTurn = currentTurn === "X" ? "O" : "X";
+    }
+  }
+  function checkWinner(){
+    const wins = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+    const [p1Char, p2Char] = getChars();
+    for(const [a,b,c] of wins){
+      if(cells[a] && cells[a] === cells[b] && cells[b] === cells[c]){
+        status.textContent = cells[a] + " wins!";
+        gameOver = true;
+        if(cells[a] === p1Char) player1Score++; else player2Score++;
+        updateScore();
+        const boxes = document.querySelectorAll(".box");
+        boxes[a].classList.add("winning");
+        boxes[b].classList.add("winning");
+        boxes[c].classList.add("winning");
+        return;
+      }
+    }
+    if(!cells.includes("")){
+      status.textContent = "It's a draw!";
+      gameOver = true;
+    }
+  }
+  function updateScore(){
+    scoreBoard.textContent = "Player 1: "+ player1Score +" | Player 2: "+ player2Score;
+  }
+  function resetGame(){
+    resetCount++;
+    cells = Array(9).fill("");
+    gameOver = false;
+    status.textContent = "";
+    updateCharDisplay();
+    const [p1Char, p2Char] = getChars();
+    currentTurn = p1Char;
+    createBoard();
+    document.querySelectorAll(".box").forEach(box => box.classList.remove("winning"));
+  }
+
+  resetBtn.addEventListener("click", resetGame);
+  backBtn.addEventListener("click", ()=> location.href = 'index.html');
+
+  updateCharDisplay();
+  const [p1Char, p2Char] = getChars();
+  currentTurn = p1Char;
+  createBoard();
+</script>
+</body>
+</html>

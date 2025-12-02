@@ -1,237 +1,147 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Tic Tac Toe</title>
+  <meta charset="utf-8" />
+  <title>Tic Tac Toe — Menu</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
   <style>
     :root{
-      --bg: white;
-      --text: black;
-      --box-bg: white;
-      --box-border: black;
-      --char-color: black;
+      --bg: #ffffff;
+      --text: #111111;
+      --accent: #2980b9;
+      --box-bg: #ffffff;
+      --box-border: #111;
+      --char-color: #111;
     }
     body.dark{
       --bg: #121212;
       --text: #39ff14;
-      --text-border:#9b59b6;
-      --char-color: #39ff14;
+      --accent: #6f42c1;
       --box-bg: #1e1e1e;
       --box-border: #9b59b6;
+      --char-color: #39ff14;
     }
-    *{
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+    *{box-sizing:border-box;margin:0;padding:0}
     body{
-      font-family: 'Segoe UI', sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      transition: background 0.3s ease, color 0.3s ease;
+      min-height:100vh;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      gap:20px;
+      background:var(--bg);
+      color:var(--text);
+      font-family:Segoe UI, Roboto, Arial, sans-serif;
+      transition:background .25s, color .25s;
+      padding:24px;
     }
-    h1{
-      font-size: 50px;
-      margin-bottom: 30px;
+    header{
+        width:100%;
+        display:flex;
+        justify-content:center;
+        align-items:center;
+        margin-bottom:10px;
     }
-    #playerInfo{
-      font-size: 20px;
-      margin-bottom: 20px;
-      display: flex;
-      gap: 30px;
-      align-items: center;
+    #toggleTheme{
+      padding:8px 12px;
+      border-radius:8px;
+      border:none;
+      cursor:pointer;
+      background:var(--accent);
+      color:white;
+      font-weight:600;
     }
-    .player-box{
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    .char-box{
-      width: 30px;
-      height: 30px;
-      font-weight: bold;
-      font-size: 30px;
-      border: 2px solid var(--box-border);
-      border-radius: 5px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      color: var(--char-color);
+    main{
+      width:100%;
+      max-width:520px;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      gap:18px;
     }
     #board{
-      display: grid;
-      grid-template-columns: repeat(3, 110px);
-      grid-template-rows: repeat(3, 110px);
-      gap: 10px;
-      margin: 20px auto;
+      display:grid;
+      grid-template-columns:repeat(3, 90px);
+      grid-auto-rows:90px;
+      gap:10px;
+      pointer-events:none;
     }
     .box{
-      background-color: var(--box-bg);
-      font-size: 40px;
-      font-weight: bold;
-      color: var(--char-color);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      cursor: pointer;
-      border-radius: 10px;
-      border: 3px solid var(--box-border);
-      transition: background 0.3s, color 0.3s;
-    }
-    .box:hover{
-      background-color: #ececec;
-    }
-    body.dark .box:hover {
-      background-color: #2a2a2a;
-    }
-    #status{
-      font-size: 25px;
-      margin-top: 10px;
-      height: 30px;
-    }
-    #buttons{
-      margin-top: 15px;
-    }
-    button{
-      margin: 0 10px;
-      padding: 10px 20px;
-      font-size: 20px;
-      background-color: #2980b9;
-      color: white;
-      border: none;
-      border-radius: 10px;
-      cursor: pointer;
-      transition: background 0.3s ease;
-    }
-    button:hover{
-      background-color: #1c5e8a;
-    }
-    #score{
-      margin-top: 10px;
-      font-size: 20px;
-    }
-    .winning{
-      background-color: #28a745 !important;
-    }
-    body.dark .winning{
-      background-color: #444444 !important;
+      width:90px;
+      height:90px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      border-radius:10px;
+      border:3px solid var(--box-border);
+      background:var(--box-bg);
+      font-size:36px;
+      font-weight:700;
+      color:var(--char-color);
     }
 
+    footer{
+      width:100%;
+      display:flex;
+      justify-content:center;
+      gap:16px;
+      margin-top:6px;
+    }
+    .mode-btn{
+      padding:12px 18px;
+      border-radius:10px;
+      border:none;
+      cursor:pointer;
+      background:var(--accent);
+      color:white;
+      font-size:16px;
+      font-weight:700;
+      min-width:150px;
+    }
+    .note{font-size:14px; color:rgba(0,0,0,0.5)}
+    body.dark .note{color:rgba(255,255,255,0.35)}
   </style>
 </head>
 <body>
-  <h1>Tic Tac Toe</h1>
-  <div id="playerInfo">
-    <div class="player-box">
-      <div id="char1" class="char-box">X</div>
-      <span>Player 1</span>
+  <header>
+    <button id="toggleTheme">Toggle Dark/Light</button>
+  </header>
+  <main>
+    <h1>Tic Tac Toe</h1>
+    <div id="board" aria-hidden="true">
+      <div class="box"></div>
+      <div class="box"></div>
+      <div class="box"></div>
+      <div class="box"></div>
+      <div class="box"></div>
+      <div class="box"></div>
+      <div class="box"></div>
+      <div class="box"></div>
+      <div class="box"></div>
     </div>
-    <div class="player-box">
-      <div id="char2" class="char-box">O</div>
-      <span>Player 2</span>
-    </div>
-  </div>
-  <div id="board"></div>
-  <div id="status"></div>
-  <div id="score">Player 1: 0 | Player 2: 0</div>
-  <div id="buttons">
-    <button id="reset">Reset</button>
-    <button id="toggleTheme">Toggle Light/Dark</button>
-  </div>
+    <p class="note">Choose a mode </p>
+    <footer>
+      <button class="mode-btn" id="pvp">PvP</button>
+      <button class="mode-btn" id="pvce">PvC (Easy)</button>
+      <button class="mode-btn" id="pvch">PvC (Hard)</button>
+    </footer>
+  </main>
   <script>
-    const board = document.getElementById("board");
-    const status = document.getElementById("status");
-    const resetBtn = document.getElementById("reset");
-    const toggleThemeBtn = document.getElementById("toggleTheme");
-    const char1 = document.getElementById("char1");
-    const char2 = document.getElementById("char2");
-    const scoreBoard = document.getElementById("score");
-    let resetCount = 0;
-    let currentTurn;
-    let gameOver = false;
-    let cells = Array(9).fill("");
-    let player1Score = 0;
-    let player2Score = 0;
-    function getChars(){
-      return resetCount % 2 === 0 ? ["X", "O"] : ["O", "X"];
+    const toggleThemeBtn = document.getElementById('toggleTheme');
+    function applyThemeFromStorage(){
+      if(localStorage.getItem('ttt-theme') === 'dark') document.body.classList.add('dark');
+      toggleThemeBtn.textContent = document.body.classList.contains('dark') ? 'Switch to Light' : 'Switch to Dark';
     }
-    function updateCharDisplay(){
-      const [p1, p2] = getChars();
-      char1.textContent = p1;
-      char2.textContent = p2;
-    }
-    function createBoard(){
-      board.innerHTML = "";
-      for (let i = 0; i < 9; i++){
-        const cell = document.createElement("div");
-        cell.classList.add("box");
-        cell.dataset.index = i;
-        cell.textContent = cells[i];
-        cell.addEventListener("click", handleClick);
-        board.appendChild(cell);
-      }
-    }
-    function handleClick(e){
-      const idx = e.target.dataset.index;
-      if(cells[idx] !== "" || gameOver) return;
-      cells[idx] = currentTurn;
-      e.target.textContent = currentTurn;
-      checkWinner();
-      if(!gameOver){
-        currentTurn = currentTurn === "X" ? "O" : "X";
-      }
-    }
-    function checkWinner(){
-      const wins = [[0, 1, 2], [3, 4, 5], [6, 7, 8], [0, 3, 6], [1, 4, 7], [2, 5, 8], [0, 4, 8], [2, 4, 6]];
-      const [p1Char, p2Char] = getChars();
-      for(let [a, b, c] of wins){
-        if(cells[a] && cells[a] === cells[b] && cells[b] === cells[c]){
-          status.textContent = cells[a] + " wins!";
-          gameOver = true;
-          if(cells[a] === p1Char) player1Score++;
-          else player2Score++;
-          updateScore();
-          document.querySelectorAll(".box")[a].classList.add("winning");
-          document.querySelectorAll(".box")[b].classList.add("winning");
-          document.querySelectorAll(".box")[c].classList.add("winning");
-          return;
-        }
-      }
-      if(!cells.includes("")){
-        status.textContent = "It's a draw!";
-        gameOver = true;
-      }
-    }
-    function updateScore(){
-      scoreBoard.textContent = " Player 1: "+ player1Score +" | Player 2: "+ player2Score;
-    }
-    function resetGame(){
-      resetCount++;
-      cells = Array(9).fill("");
-      gameOver = false;
-      status.textContent = "";
-      updateCharDisplay();
-      const [p1Char, p2Char] = getChars();
-      currentTurn = p1Char === "X" ? p1Char : p2Char;
-      createBoard();
-      document.querySelectorAll(".box").forEach(box =>{
-      box.classList.remove("winning");
-      });
-    }
-    resetBtn.addEventListener("click", resetGame);
-    toggleThemeBtn.addEventListener("click", () => {
-      document.body.classList.toggle("dark");
-      toggleThemeBtn.textContent = document.body.classList.contains("dark") ? "Switch to Light Mode" : "Switch to Dark Mode";
+    applyThemeFromStorage();
+    toggleThemeBtn.addEventListener('click', ()=>{
+      document.body.classList.toggle('dark');
+      const isDark = document.body.classList.contains('dark');
+      localStorage.setItem('ttt-theme', isDark ? 'dark' : 'light');
+      toggleThemeBtn.textContent = isDark ? 'Switch to Light' : 'Switch to Dark';
     });
-    updateCharDisplay();
-    const [p1Char, p2Char] = getChars();
-    currentTurn = p1Char === "X" ? p1Char : p2Char;
-    createBoard();
+    document.getElementById('pvp').addEventListener('click', ()=> location.href = 'pvp.html');
+    document.getElementById('pvce').addEventListener('click', ()=> location.href = 'pvce.html');
+    document.getElementById('pvch').addEventListener('click', ()=> location.href = 'pvch.html');
   </script>
 </body>
 </html>
