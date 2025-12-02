@@ -19,7 +19,7 @@ Setup & Installation
 
 Clone the repository:
 
-git clone https://github.com/TGD82/tictactoe.git
+git clone https://github.com/dhirgoplani/tictactoe.git
 cd tictactoe
 Compile the game:
 gcc ttt.c -o ttt
@@ -28,7 +28,7 @@ Run the executable:
 
 🔹 Web Version
 
-Open https://tgd82.github.io/tictactoe/ in any browser.
+Open https://dhirgoplani.github.io/tictactoe/ in any browser.
 Play directly in the browser—no setup required.
 
 🎮 Usage
