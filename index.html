@@ -7,12 +7,12 @@
   <link rel="stylesheet" href="style.css">
   <style>
   #board {
-    grid-template-columns: repeat(3, 140px) !important;
-    grid-auto-rows: 140px !important;
-    gap: 14px !important;
+    grid-template-columns: repeat(3, 130px) !important;
+    grid-auto-rows: 130px !important;
+    gap: 13px !important;
   }
   .box {
-    font-size: 48px;
+    font-size: 45px;
     border-width: 4px;
   }
    .menu-container {
@@ -28,13 +28,39 @@
     gap: 16px;
     width: 100%;
   }
-
   .menu-buttons button {
     padding: 12px 20px;
     min-width: 150px;
     font-size: 16px;
     border-radius: 12px;
   }
+  @media (max-width: 600px){
+  h1{
+    font-size: 32px;
+  }
+  .menu-container{
+    gap: 16px;
+    margin-top: 10px;
+  }
+  #board{
+    grid-template-columns: repeat(3, 90px) !important;
+    grid-auto-rows: 90px !important;
+    gap: 10px !important;
+  }
+  .box{
+    font-size: 32px;
+    border-width: 3px;
+  }
+  footer.menu-buttons{
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .menu-buttons button{
+    min-width: 130px;
+    padding: 10px 16px;
+    font-size: 14px;
+  }
+}
 </style>
 </head>
 <body>
@@ -52,7 +78,6 @@
     <div class="box"></div>
     <div class="box"></div>
   </div>
-
   <footer class="menu-buttons">
     <button id="toggleTheme">Toggle Dark/Light</button>
     <button class="mode-btn" id="pvp">PvP</button>

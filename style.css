@@ -142,3 +142,43 @@ button.small{
 .mode-btn{
   min-width:150px;
 }
+
+@media (max-width: 600px) {
+  h1{
+    font-size: 28px;
+  }
+  #board{
+    grid-template-columns: repeat(3, 80px);
+    grid-auto-rows: 80px;
+    gap: 8px;
+  }
+  .box{
+    font-size: 32px;
+    border-width: 2px;
+  }
+  #playerInfo {
+    font-size: 16px;
+    gap: 8px;
+  }
+  .char-box{
+    width: 32px;
+    height: 32px;
+    font-size: 20px;
+  }
+  button{
+    padding: 8px 12px;
+    font-size: 13px;
+    border-radius: 8px;
+  }
+  .mode-btn{
+    min-width: 120px;
+  }
+  #buttons{
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  body{
+    padding: 10px;
+    gap: 12px;
+  }
+}
