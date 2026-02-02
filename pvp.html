@@ -113,7 +113,7 @@
     status.textContent = "";
     updateCharDisplay();
     const [p1Char, p2Char] = getChars();
-    currentTurn = p1Char;
+    currentTurn = resetCount % 2 === 0 ? p1Char : p2Char;
     createBoard();
     document.querySelectorAll(".box").forEach(box => box.classList.remove("winning"));
   }
