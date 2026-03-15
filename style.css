@@ -1,19 +1,21 @@
 :root{
   --bg: #ffffff;
-  --text: #111111;
-  --accent: #2980b9;
-  --box-bg: #ffffff;
-  --box-border: #111111;
-  --char-color: #111111;
+  --text: #ffa114;
+  --accent: #448aff;
+  --box-bg: #f2f2f2;
+  --box-border: #448aff;
+  --char-color: #ffa114;
+  --win-bg: #cad2df;
 }
 
 body.dark{
-  --bg: #121212;
+  --bg: #000000;
   --text: #39ff14;
-  --accent: #6f42c1;
+  --accent: #8000ff;
   --box-bg: #1e1e1e;
-  --box-border: #9b59b6;
+  --box-border: #8000ff;
   --char-color: #39ff14;
+  --win-bg:#444444;
 }
 *{
   padding:0;
@@ -103,10 +105,8 @@ h1{
   opacity:0.85;
 }
 .winning{
-  background:#28a745 !important;
-}
-body.dark .winning{
-  background:#444 !important;
+  background: var(--win-bg) !important;
+  animation: pulse 1s infinite;
 }
 #status{
   height:28px;
@@ -141,6 +141,12 @@ button.small{
 
 .mode-btn{
   min-width:150px;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
 }
 
 @media (max-width: 600px) {
